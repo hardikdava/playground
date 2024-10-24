@@ -28,15 +28,39 @@ jobs:
           pip install mkdocs-material mkdocs
           pip install mkdocstrings mkdocstrings-python
           pip install mkdocs-mermaid2-plugin
-          
-      - name: Configure staging environment
-        run: |
-          # Create a staging config by modifying the original
-          cp mkdocs.yml mkdocs.staging.yml
-          # Update site_name and site_url for staging
-          sed -i 's/site_name: Gen2AI/site_name: Gen2AI (Staging)/g' mkdocs.staging.yml
-          sed -i 's|site_url: https://graswald.github.io/gen2-ai/|site_url: https://graswald.github.io/gen2-ai/staging/|g' mkdocs.staging.yml
 
-      - name: Build and deploy staging
+      - name: Deploy to staging
         run: |
-          mkdocs gh-deploy --config-file mkdocs.staging.yml --remote-branch gh-pages-staging --force
+          # Create temporary directory for staging build
+          mkdir staging-build
+          
+          # Copy all documentation files to staging directory
+          cp -r docs staging-build/
+          cp mkdocs.yml staging-build/
+          
+          # Modify mkdocs.yml for staging
+          cd staging-build
+          sed -i 's/site_name: Gen2AI/site_name: Gen2AI (Staging)/g' mkdocs.yml
+          sed -i 's|site_url: https://graswald.github.io/gen2-ai/|site_url: https://graswald.github.io/gen2-ai/staging/|g' mkdocs.yml
+          
+          # Build and deploy to gh-pages branch in a staging directory
+          mkdocs build
+          
+          # If this is the first deployment, checkout gh-pages branch or create it
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          
+          # Checkout gh-pages branch or create if it doesn't exist
+          git checkout gh-pages || git checkout --orphan gh-pages
+          
+          # Create staging directory if it doesn't exist
+          mkdir -p staging
+          
+          # Remove old staging content and copy new content
+          rm -rf staging/*
+          cp -r site/* staging/
+          
+          # Commit and push changes
+          git add staging/
+          git commit -m "Deploy staging documentation" || echo "No changes to commit"
+          git push origin gh-pages
