@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main  # Triggers the workflow on pushes to the main branch
-  pull_request:
-    branches:
-      - main  # Optionally trigger the workflow on pull requests to main
 
 jobs:
   deploy:
@@ -35,8 +32,11 @@ jobs:
 
       # Step 5: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: mkdocs.yml
 
