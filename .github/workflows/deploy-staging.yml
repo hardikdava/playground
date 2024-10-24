@@ -1,66 +1,53 @@
-name: Deploy MkDocs Staging
+name: Docs WorkFlow - Develop Tag 📚
+
 on:
   push:
     branches:
-      - staging  # Change this to your staging/development branch
+      - staging
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref}}
+  cancel-in-progress: true
 
 permissions:
   contents: write
+  pages: write
+  pull-requests: write
+
 
 jobs:
-  deploy-staging:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: 🔄 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-
-      - name: Install dependencies
+          python-version: '3.10'
+      - name: 📦 Install mkdocs-material
+        run: pip install "mkdocs-material"
+      - name: 📦 Install mkdocstrings[python]
+        run: pip install "mkdocstrings[python]"
+      - name: 📦 Install mkdocs-material[imaging]
+        run: pip install "mkdocs-material[imaging]"
+      - name: 📦 Install mike
+        run: pip install "mike"
+      - name: 📦 Install mkdocs-git-revision-date-localized-plugin
+        run: pip install "mkdocs-git-revision-date-localized-plugin"
+      - name: 📦 Install JupyterLab
+        run: pip install jupyterlab
+      - name: 📦 Install mkdocs-jupyter
+        run: pip install mkdocs-jupyter
+      - name: 📦 Install mkdocs-git-committers-plugin-2
+        run: pip install mkdocs-git-committers-plugin-2
+      - name: ⚙️ Configure git for github-actions
         run: |
-          python -m pip install --upgrade pip
-          pip install mkdocs-material mkdocs
-          pip install mkdocstrings mkdocstrings-python
-          pip install mkdocs-mermaid2-plugin
-
-      - name: Deploy to staging
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: 🚀 Deploy MkDoc-Material with mike
         run: |
-          # Create temporary directory for staging build
-          mkdir staging-build
-          
-          # Copy all documentation files to staging directory
-          cp -r docs staging-build/
-          cp mkdocs.yml staging-build/
-          
-          # Modify mkdocs.yml for staging
-          cd staging-build
-          sed -i 's/site_name: Gen2AI/site_name: Gen2AI (Staging)/g' mkdocs.yml
-          sed -i 's|site_url: https://graswald.github.io/gen2-ai/|site_url: https://graswald.github.io/gen2-ai/staging/|g' mkdocs.yml
-          
-          # Build and deploy to gh-pages branch in a staging directory
-          mkdocs build
-          
-          # If this is the first deployment, checkout gh-pages branch or create it
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          
-          # Checkout gh-pages branch or create if it doesn't exist
-          git checkout gh-pages || git checkout --orphan gh-pages
-          
-          # Create staging directory if it doesn't exist
-          mkdir -p staging
-          
-          # Remove old staging content and copy new content
-          rm -rf staging/*
-          cp -r site/* staging/
-          
-          # Commit and push changes
-          git add staging/
-          git commit -m "Deploy staging documentation" || echo "No changes to commit"
-          git push origin gh-pages
+          MKDOCS_GIT_COMMITTERS_APIKEY=${{ secrets.GITHUB_TOKEN }} mike deploy --push develop
