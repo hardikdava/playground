@@ -1,0 +1,48 @@
+site_name: Gen2AI
+site_author: Graswald
+site_url: https://hardikdava.github.io/gen2-ai/
+site_description: Gen2AI is a project to create sota video to 3D Gaussian Splatting models.
+repo_name: graswald/gen2ai
+repo_url: https://github.com/Graswald/gen2-ai
+edit_uri: tree/main/docs
+copyright: Graswald 2024. All rights reserved.
+
+nav:
+  - Configuration: config.md
+  - Development:
+      - Development: development.md
+  - Data:
+    - Pipeline Steps: pipeline_steps.md
+    - Input Quality Metrics: input_quality_metrics.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            parameter_headings: true
+            paths: [gen2ai]
+            load_external_modules: true
+            allow_inspection: true
+            show_bases: true
+            group_by_category: true
+            docstring_style: google
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_category_heading: true
+          domains: [std, py]
+  - mermaid2
+
+exclude_docs: |
+  deplyoment.md
+
+# Messages shown during document build
+# Reference: https://www.mkdocs.org/user-guide/configuration/#validation
+# Values: [warn, info, ignore]
+validation:
+  nav:
+    absolute_links: ignore
+  links:
+    absolute_links: ignore
