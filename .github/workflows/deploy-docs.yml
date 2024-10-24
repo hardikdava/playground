@@ -40,3 +40,9 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           mkdocs gh-deploy --remote-branch gh-pages --remote-name origin --force
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
