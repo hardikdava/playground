@@ -1,9 +1,10 @@
 name: Deploy MkDocs
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches:
-      - main  # production deployment
-      - staging  # staging deployment
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: write
