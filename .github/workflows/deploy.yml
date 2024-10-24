@@ -33,6 +33,11 @@ jobs:
       - name: Build MkDocs site
         run: mkdocs build
 
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdocs gh-deploy --remote-branch gh-pages --remote-name origin --force
+
       # Step 5: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
