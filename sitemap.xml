@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://hardikdava.github.io/playground/InputQualityMetrics/</loc>
+         <lastmod>2024-10-24</lastmod>
+    </url>
+    <url>
+         <loc>https://hardikdava.github.io/playground/config/</loc>
+         <lastmod>2024-10-24</lastmod>
+    </url>
+    <url>
+         <loc>https://hardikdava.github.io/playground/deployment/</loc>
+         <lastmod>2024-10-24</lastmod>
+    </url>
+    <url>
+         <loc>https://hardikdava.github.io/playground/pipeline_steps/</loc>
+         <lastmod>2024-10-24</lastmod>
+    </url>
+</urlset>
