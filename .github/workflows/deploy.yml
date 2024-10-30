@@ -1,0 +1,38 @@
+name: Deploy MkDocs
+on:
+  push:
+    branches:
+      - main  # Set to your default branch
+  workflow_dispatch:  # Allows manual triggering
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper timestamps
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install MkDocs and the Material theme
+          pip install mkdocs-material mkdocs
+          
+          # Install additional plugins from your mkdocs.yml
+          pip install mkdocstrings
+          pip install mkdocstrings-python  # Python handler for mkdocstrings
+          pip install mkdocs-mermaid2-plugin
+
+      - name: Build and deploy
+        run: |
+          mkdocs gh-deploy --force
